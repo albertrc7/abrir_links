@@ -1,16 +1,13 @@
 (() => {
-  const contenedor = document.querySelector(".portlet.box.taronja");
-  if (!contenedor) return;
+  const tabla = document.querySelector("table");
+  if (!tabla) return;
 
-  const dominioRegex = /\\.\w{2,}/; // Detecta .com, .org, .cat, etc.
-
-  const links = Array.from(contenedor.querySelectorAll('a'))
-    .filter(a =>
-      a.href.startsWith("http") &&
-      dominioRegex.test(a.href) &&
-      !a.href.includes("google.com/search?q=site:")
-    )
-    .map(a => a.href);
+  const links = Array.from(tabla.querySelectorAll("tbody tr")).map(tr => {
+    const celdas = tr.querySelectorAll("td");
+    if (celdas.length < 2) return null;
+    const link = celdas[1].querySelector("a[href^='http']");
+    return link ? link.href : null;
+  }).filter(Boolean);
 
   chrome.storage.local.set({ enlacesDetectados: links });
 })();
